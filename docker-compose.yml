@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+    app:
+        build: .
+        command: nodemon app/main.js
+        volumes:
+            - .:/usr/app/
+            - /usr/app/node_modules
+        links:
+            - redis
+        environment:
+            REDIS_URL: redis://redis:6379
+
+    unit-tests:
+        build: .
+        command: yarn test test/unit
+
+    integration-tests:
+        build: .
+        command: yarn test test/integration
+        links:
+            - redis
+        environment:
+            REDIS_URL: redis://redis:6379
+
+    redis:
+        image: redis
+        ports:
+            - '6380:6379'
